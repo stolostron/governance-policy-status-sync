@@ -17,7 +17,7 @@ spec:
         - name: multiclusterhub-operator-pull-secret
       containers:
         - name: governance-policy-status-sync
-          image: quay.io/open-cluster-management/governance-policy-status-sync:1.0.0-PR1-c8d4913b20b44dad68f6d6a6b848e755fa87db6e
+          image: quay.io/open-cluster-management/governance-policy-status-sync:latest-dev
           command:
           - governance-policy-status-sync
           args:

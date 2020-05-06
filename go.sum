@@ -599,8 +599,8 @@ github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1Cpa
 github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7JYyY=
 github.com/onsi/gomega v1.8.1 h1:C5Dqfs/LeauYDX0jJXIe2SWmwCbGzx9yF8C8xy3Lh34=
 github.com/onsi/gomega v1.8.1/go.mod h1:Ho0h+IUsWyvy1OpqCwxlQ/21gkhVunqlU8fDGcoTdcA=
-github.com/open-cluster-management/governance-policy-propagator v0.0.0-20200506125425-6470aaef2084 h1:YZ8AfJ6Vp2RD+odTVQ6FSYflxpB0GzzZLTl3ySYf8OI=
-github.com/open-cluster-management/governance-policy-propagator v0.0.0-20200506125425-6470aaef2084/go.mod h1:5iRpnHLtDYH2v/l2lzCKNnEwFjXYchybkSq4Wd+wZgo=
+github.com/open-cluster-management/governance-policy-propagator v0.0.0-20200506203135-9f5f6235ab3c h1:FYXEyUU76YJqvklTE+RDti8ttk8sFYbru7V/S3cLOlg=
+github.com/open-cluster-management/governance-policy-propagator v0.0.0-20200506203135-9f5f6235ab3c/go.mod h1:5iRpnHLtDYH2v/l2lzCKNnEwFjXYchybkSq4Wd+wZgo=
 github.com/opencontainers/go-digest v0.0.0-20170106003457-a6d0ee40d420/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v0.0.0-20180430190053-c9281466c8b2/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
