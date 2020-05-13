@@ -30,8 +30,7 @@ var (
 	clientManaged         kubernetes.Interface
 	clientManagedDynamic  dynamic.Interface
 	gvrPolicy             schema.GroupVersionResource
-	gvrPlacementBinding   schema.GroupVersionResource
-	gvrPlacementRule      schema.GroupVersionResource
+	gvrEvent              schema.GroupVersionResource
 	kubeconfigHub         string
 	kubeconfigManaged     string
 	defaultTimeoutSeconds int
@@ -55,8 +54,7 @@ func init() {
 var _ = BeforeSuite(func() {
 	By("Setup Hub and Managed client")
 	gvrPolicy = schema.GroupVersionResource{Group: "policies.open-cluster-management.io", Version: "v1", Resource: "policies"}
-	gvrPlacementBinding = schema.GroupVersionResource{Group: "policies.open-cluster-management.io", Version: "v1", Resource: "placementbindings"}
-	gvrPlacementRule = schema.GroupVersionResource{Group: "apps.open-cluster-management.io", Version: "v1", Resource: "placementrules"}
+	gvrEvent = schema.GroupVersionResource{Group: "", Version: "v1", Resource: "events"}
 	clientHub = NewKubeClient("", kubeconfigHub, "")
 	clientHubDynamic = NewKubeClientDynamic("", kubeconfigHub, "")
 	clientManaged = NewKubeClient("", kubeconfigManaged, "")
