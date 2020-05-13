@@ -3,6 +3,8 @@
 package e2e
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/open-cluster-management/governance-policy-propagator/test/utils"
@@ -35,7 +37,25 @@ var _ = Describe("Test status sync", func() {
 		utils.ListWithTimeout(clientHubDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 		utils.ListWithTimeout(clientManagedDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 	})
-	It("Should set status with event", func() {
-		By("Generating an event on the policy")
+	It("Should set status to compliant", func() {
+		By("Generating an compliant event on the policy")
+		managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+		Expect(managedPlc).NotTo(BeNil())
+		managedRecorder.Event(managedPlc, "Normal", "policy: managed/case2-test-policy-trustedcontainerpolicy", fmt.Sprintf("Compliant; No violation detected"))
+		// yamlStatus := utils.ParseYaml("../resources/case2_status_sync/status-compliant.yaml")
+		Eventually(func() interface{} {
+			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
+	})
+	It("Should set status to NonCompliant", func() {
+		By("Generating an compliant event on the policy")
+		managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+		Expect(managedPlc).NotTo(BeNil())
+		managedRecorder.Event(managedPlc, "Normal", "policy: managed/case2-test-policy-trustedcontainerpolicy", fmt.Sprintf("NonCompliant; there is violation"))
+		Eventually(func() interface{} {
+			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant"))
 	})
 })

@@ -12,6 +12,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/open-cluster-management/governance-policy-status-sync/test/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -20,6 +21,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/record"
 	"k8s.io/klog"
 )
 
@@ -37,6 +39,8 @@ var (
 
 	defaultImageRegistry       string
 	defaultImagePullSecretName string
+
+	managedRecorder record.EventRecorder
 )
 
 func TestE2e(t *testing.T) {
@@ -63,7 +67,7 @@ var _ = BeforeSuite(func() {
 	defaultImagePullSecretName = "multiclusterhub-operator-pull-secret"
 	testNamespace = "managed"
 	defaultTimeoutSeconds = 30
-	By("Create Namesapce if needed")
+	By("Create Namespace if needed")
 	namespacesHub := clientHub.CoreV1().Namespaces()
 	if _, err := namespacesHub.Get(testNamespace, metav1.GetOptions{}); err != nil && errors.IsNotFound(err) {
 		Expect(namespacesHub.Create(&corev1.Namespace{
@@ -80,6 +84,10 @@ var _ = BeforeSuite(func() {
 			},
 		})).NotTo(BeNil())
 	}
+	By("Create EventRecorder")
+	var err error
+	managedRecorder, err = utils.CreateRecorder(clientManaged, "status-sync-controller-test")
+	Expect(err).To(BeNil())
 })
 
 func NewKubeClient(url, kubeconfig, context string) kubernetes.Interface {

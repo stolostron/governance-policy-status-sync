@@ -151,7 +151,7 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	// filter events to current policy instance and build map
 	eventForPolicyMap := make(map[string]*[]policiesv1.ComplianceHistory)
-	rgx, err := regexp.Compile(`^policy:\s*([A-Za-z0-9.-]+)\s*\/([A-Za-z0-9.-]+)`)
+	rgx, err := regexp.Compile(`(?i)^policy:\s*([A-Za-z0-9.-]+)\s*\/([A-Za-z0-9.-]+)`)
 	if err != nil {
 		// regexp is wrong, how?
 		return reconcile.Result{}, err
