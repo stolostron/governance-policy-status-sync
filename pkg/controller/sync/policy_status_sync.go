@@ -255,7 +255,8 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 		if len(existingDpt.History) > 0 {
 			existingDpt.ComplianceState = policiesv1.NonCompliant
 			s := strings.Split(existingDpt.History[0].Message, ";")
-			if len(s) > 1 && strings.ToLower(strings.TrimSpace(strings.TrimPrefix(s[0], "(combined from similar events):"))) == "compliant" {
+			if len(s) > 1 && strings.ToLower(strings.TrimSpace(
+				strings.TrimPrefix(s[0], "(combined from similar events):"))) == "compliant" {
 				existingDpt.ComplianceState = policiesv1.Compliant
 			} else {
 				// one violation found in status of one template, set overall compliancy to NonCompliant
