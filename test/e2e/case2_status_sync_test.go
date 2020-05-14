@@ -1,4 +1,5 @@
 // Copyright (c) 2020 Red Hat, Inc.
+// +build dd
 
 package e2e
 
@@ -48,9 +49,14 @@ var _ = Describe("Test status sync", func() {
 		managedRecorder.Event(managedPlc, "Normal", "policy: managed/case2-test-policy-trustedcontainerpolicy", fmt.Sprintf("Compliant; No violation detected"))
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
-			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
+		By("Checking if hub policy status is in sync")
+		Eventually(func() interface{} {
+			hubPlc := utils.GetWithTimeout(clientHubDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return hubPlc.Object["status"]
+		}, defaultTimeoutSeconds, 1).Should(Equal(managedPlc.Object["status"]))
 	})
 	It("Should set status to NonCompliant", func() {
 		By("Generating an compliant event on the policy")
@@ -70,6 +76,11 @@ var _ = Describe("Test status sync", func() {
 		Expect(len(plc.Status.Details)).To(Equal(1))
 		Expect(len(plc.Status.Details[0].History)).To(Equal(2))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
+		By("Checking if hub policy status is in sync")
+		Eventually(func() interface{} {
+			hubPlc := utils.GetWithTimeout(clientHubDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return hubPlc.Object["status"]
+		}, defaultTimeoutSeconds, 1).Should(Equal(managedPlc.Object["status"]))
 	})
 	It("Should set status to Compliant again", func() {
 		By("Generating an compliant event on the policy")
@@ -89,6 +100,11 @@ var _ = Describe("Test status sync", func() {
 		Expect(len(plc.Status.Details)).To(Equal(1))
 		Expect(len(plc.Status.Details[0].History)).To(Equal(3))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
+		By("Checking if hub policy status is in sync")
+		Eventually(func() interface{} {
+			hubPlc := utils.GetWithTimeout(clientHubDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return hubPlc.Object["status"]
+		}, defaultTimeoutSeconds, 1).Should(Equal(managedPlc.Object["status"]))
 		By("clean up all events")
 		utils.Kubectl("delete", "events", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
@@ -140,6 +156,11 @@ var _ = Describe("Test status sync", func() {
 		By("Checking if size of the history is 10")
 		Expect(len(plc.Status.Details[0].History)).To(Equal(10))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
+		By("Checking if hub policy status is in sync")
+		Eventually(func() interface{} {
+			hubPlc := utils.GetWithTimeout(clientHubDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return hubPlc.Object["status"]
+		}, defaultTimeoutSeconds, 1).Should(Equal(managedPlc.Object["status"]))
 		By("clean up all events")
 		utils.Kubectl("delete", "events", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
