@@ -14,6 +14,8 @@ import (
 const case2PolicyName string = "default.case2-test-policy"
 const case2PolicyYaml string = "../resources/case2_status_sync/case2-test-policy.yaml"
 
+// const testNamespace string = "managed"
+
 var _ = Describe("Test status sync", func() {
 	BeforeEach(func() {
 		By("Creating a policy on hub cluster in ns:" + testNamespace)
