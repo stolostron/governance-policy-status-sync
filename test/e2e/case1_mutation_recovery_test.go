@@ -3,6 +3,8 @@
 package e2e
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	policiesv1 "github.com/open-cluster-management/governance-policy-propagator/pkg/apis/policies/v1"
@@ -73,5 +75,29 @@ var _ = Describe("Test mutation recovery", func() {
 			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			return managedPlc.Object["spec"]
 		}, defaultTimeoutSeconds, 1).Should(utils.SemanticEqual(hubPlc.Object["spec"]))
+	})
+	It("Should recover status if policy status being modified", func() {
+		By("Generating an compliant event on the policy")
+		managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
+		Expect(managedPlc).NotTo(BeNil())
+		managedRecorder.Event(managedPlc, "Normal", "policy: managed/case1-test-policy-trustedcontainerpolicy", fmt.Sprintf("Compliant; No violation detected"))
+		By("Checking if policy status is compliant")
+		Eventually(func() interface{} {
+			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
+		By("Update status to NonCompliant")
+		managedPlc.Object["status"].(map[string]interface{})["compliant"] = "NonCompliant"
+		managedPlc, err := clientManagedDynamic.Resource(gvrPolicy).Namespace(testNamespace).UpdateStatus(managedPlc, metav1.UpdateOptions{})
+		Expect(err).To(BeNil())
+		Expect(managedPlc.Object["status"].(map[string]interface{})["compliant"]).To(Equal("NonCompliant"))
+		By("Checking if policy status was recovered to compliant")
+		Eventually(func() interface{} {
+			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
+			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
+		By("clean up all events")
+		utils.Kubectl("delete", "events", "-n", testNamespace, "--all",
+			"--kubeconfig=../../kubeconfig_managed")
 	})
 })
