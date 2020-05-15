@@ -61,7 +61,8 @@ func Add(mgr manager.Manager, hubCfg *rest.Config) error {
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, hubClient client.Client, hubRecorder record.EventRecorder) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, hubClient client.Client,
+	hubRecorder record.EventRecorder) reconcile.Reconciler {
 	return &ReconcilePolicy{hubClient: hubClient, managedClient: mgr.GetClient(),
 		hubRecorder: hubRecorder, managedRecorder: mgr.GetEventRecorderFor(controllerName),
 		scheme: mgr.GetScheme()}
