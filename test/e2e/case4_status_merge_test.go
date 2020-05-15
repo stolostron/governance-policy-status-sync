@@ -54,7 +54,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Delete events in ns:" + testNamespace)
 		utils.Kubectl("delete", "event", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		utils.ListWithTimeout(clientManagedDynamic, gvrEvent, metav1.ListOptions{FieldSelector: "involvedObject.name=default.case4-test-policy"}, 0, true, defaultTimeoutSeconds)
+		utils.ListWithTimeout(clientManagedDynamic, gvrEvent, metav1.ListOptions{FieldSelector: "involvedObject.name=default.case4-test-policy,reason!=PolicyStatusSync"}, 0, true, defaultTimeoutSeconds)
 		By("Generating some new events in ns:" + testNamespace)
 		managedRecorder.Event(managedPlc, "Warning", "policy: managed/case4-test-policy-trustedcontainerpolicy", fmt.Sprintf("NonCompliant; Violation detected"))
 		managedRecorder.Event(managedPlc, "Normal", "policy: managed/case4-test-policy-trustedcontainerpolicy", fmt.Sprintf("Compliant; No violation detected"))
