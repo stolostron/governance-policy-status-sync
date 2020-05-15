@@ -302,6 +302,7 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 	// all done, update status on managed and hub
 	// instance.Status.Details = nil
 	if !equality.Semantic.DeepEqual(newStatus, oldStatus) {
+		reqLogger.Info("status mismatch, update it... ")
 		err = r.managedClient.Status().Update(context.TODO(), instance)
 		if err != nil {
 			reqLogger.Error(err, "Failed to get update policy status on managed")
@@ -319,6 +320,8 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 		r.hubRecorder.Event(instance, "Normal", "PolicyStatusSync",
 			fmt.Sprintf("Policy %s status was updated in cluster namespace %s", hubPlc.GetName(),
 				hubPlc.GetNamespace()))
+	} else {
+		reqLogger.Info("status match, nothing to update... ")
 	}
 
 	reqLogger.Info("Reconciling complete...")
