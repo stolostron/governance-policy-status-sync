@@ -97,7 +97,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		Consistently(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case3PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
-		}, 20, 1).Should(Equal("NonCompliant"))
+		}, 20, 1).Should(BeNil())
 		By("Checking if hub policy status is in sync")
 		Eventually(func() interface{} {
 			hubPlc := utils.GetWithTimeout(clientHubDynamic, gvrPolicy, case3PolicyName, testNamespace, true, defaultTimeoutSeconds)
