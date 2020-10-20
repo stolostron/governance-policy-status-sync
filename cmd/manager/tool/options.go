@@ -64,7 +64,7 @@ func CreateClusterNs(client *kubernetes.Interface, nsName string) error {
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// not found, create it
-			log.Info("Cluster namespace not found, creating it...", "Namespace", ns)
+			log.Info("Cluster namespace not found, creating it...", "Namespace", nsName)
 			_, err := (*client).CoreV1().Namespaces().Create(&corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:   nsName,
