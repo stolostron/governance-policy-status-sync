@@ -76,21 +76,21 @@ func CreateClusterNs(client *kubernetes.Interface, nsName string) error {
 		return err
 	}
 	// namespace exists, patching it
-	log.Info("Cluster namespace exists, checking if label exists...", "Namespace", ns)
+	log.Info("Cluster namespace exists, checking if label exists...", "Namespace", nsName)
 	labels := ns.GetLabels()
 	if labels == nil {
 		labels = make(map[string]string)
 	}
 	if _, ok := labels[clusterLabel]; !ok {
-		log.Info("Label doesn't exist, patching it...", "Namespace", ns)
+		log.Info("Label doesn't exist, patching it...", "Namespace", nsName)
 		labels[clusterLabel] = "true"
 		ns.SetLabels(labels)
 		_, err = (*client).CoreV1().Namespaces().Update(ns)
 		if err != nil {
-			log.Error(err, "Failed to patch cluster namespace with label.", "Namespace", ns)
+			log.Error(err, "Failed to patch cluster namespace with label.", "Namespace", nsName)
 			return err
 		}
 	}
-	log.Info("Cluster namespace exists with label", "Namespace", ns)
+	log.Info("Cluster namespace exists with label", "Namespace", nsName)
 	return nil
 }
