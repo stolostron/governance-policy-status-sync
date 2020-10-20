@@ -190,7 +190,7 @@ install-crds:
 install-resources:
 	@echo creating namespace on hub and managed
 	kubectl create ns managed --kubeconfig=$(PWD)/kubeconfig_hub
-	kubectl create ns managed --kubeconfig=$(PWD)/kubeconfig_managed
+	# kubectl create ns managed --kubeconfig=$(PWD)/kubeconfig_managed
  
 e2e-test:
 	ginkgo -v --slowSpecThreshold=10 test/e2e
