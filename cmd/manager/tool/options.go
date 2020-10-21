@@ -58,7 +58,7 @@ func ProcessFlags() {
 
 // CreateClusterNs creates the cluster namespace on managed cluster if not exists
 func CreateClusterNs(client *kubernetes.Interface, nsName string) error {
-	const clusterLabel = "policy.open-cluster-management.io/isClusterNs"
+	const clusterLabel = "policy.open-cluster-management.io/isClusterNamespace"
 	ns, err := (*client).CoreV1().Namespaces().Get(nsName, metav1.GetOptions{})
 	log.Info("Checking if cluster namespace exist.", "Namespace", nsName)
 	if err != nil {
