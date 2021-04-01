@@ -179,17 +179,17 @@ endif
 
 kind-deploy-controller: check-env
 	@echo installing policy-spec-sync
-	kubectl create ns $(KIND_NAMEPACE) --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl create secret -n $(KIND_NAMEPACE) docker-registry multiclusterhub-operator-pull-secret --docker-server=quay.io --docker-username=${DOCKER_USER} --docker-password=${DOCKER_PASS} --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl create secret -n $(KIND_NAMEPACE) generic endpoint-connmgr-hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl apply -f deploy/ -n $(KIND_NAMEPACE) --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl create ns $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl create secret -n $(KIND_NAMESPACE) docker-registry multiclusterhub-operator-pull-secret --docker-server=quay.io --docker-username=${DOCKER_USER} --docker-password=${DOCKER_PASS} --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl create secret -n $(KIND_NAMESPACE) generic endpoint-connmgr-hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl apply -f deploy/ -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
 
 kind-deploy-controller-dev:
 	@echo Pushing image to KinD cluster
 	kind load docker-image $(REGISTRY)/$(IMG):$(TAG) --name $(KIND_NAME)
 	@echo Installing $(IMG)
 	kubectl create ns $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl create secret -n $(KIND_NAMEPACE) generic endpoint-connmgr-hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl create secret -n $(KIND_NAMESPACE) generic endpoint-connmgr-hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
 	kubectl apply -f deploy/ -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
 	@echo "Patch deployment image"
 	kubectl patch deployment $(IMG) -n $(KIND_NAMESPACE) -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"$(IMG)\",\"imagePullPolicy\":\"Never\"}]}}}}" --kubeconfig=$(PWD)/kubeconfig_managed
