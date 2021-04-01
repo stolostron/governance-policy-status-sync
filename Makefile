@@ -189,6 +189,7 @@ kind-deploy-controller-dev:
 	kind load docker-image $(REGISTRY)/$(IMG):$(TAG) --name $(KIND_NAME)
 	@echo Installing $(IMG)
 	kubectl create ns $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl create secret -n $(KIND_NAMEPACE) generic endpoint-connmgr-hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
 	kubectl apply -f deploy/ -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
 	@echo "Patch deployment image"
 	kubectl patch deployment $(IMG) -n $(KIND_NAMESPACE) -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"$(IMG)\",\"imagePullPolicy\":\"Never\"}]}}}}" --kubeconfig=$(PWD)/kubeconfig_managed
