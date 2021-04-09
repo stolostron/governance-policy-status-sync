@@ -37,7 +37,7 @@ spec:
       volumes:
         - name: klusterlet-config
           secret:
-            secretName: endpoint-connmgr-hub-kubeconfig
+            secretName: hub-kubeconfig
             defaultMode: 420
 
 ---
@@ -48,7 +48,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: governance-policy-status-sync
-  namespace: multicluster-endpoint
+  namespace: open-cluster-management-agent-addon
 roleRef:
   kind: ClusterRole
   name: governance-policy-status-sync
