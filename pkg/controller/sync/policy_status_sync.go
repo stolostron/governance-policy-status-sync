@@ -203,7 +203,7 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 			eventForPolicyMap[templateName] = &templateEvents
 		}
 	}
-	oldStatus := instance.Status.DeepCopy()
+	oldStatus := *instance.Status.DeepCopy()
 	newStatus := policiesv1.PolicyStatus{}
 	for _, policyT := range instance.Spec.PolicyTemplates {
 		object, _, err := unstructured.UnstructuredJSONScheme.Decode(policyT.ObjectDefinition.Raw, nil, nil)
@@ -292,12 +292,11 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 		reqLogger.Info("status update complete... ", "PolicyTemplate", tName)
 	}
 
-	instance.Status = newStatus
 	// one violation found in status of one template, set overall compliancy to NonCompliant
 	isCompliant := true
 	for _, dpt := range newStatus.Details {
 		if dpt.ComplianceState == "NonCompliant" {
-			instance.Status.ComplianceState = policiesv1.NonCompliant
+			newStatus.ComplianceState = policiesv1.NonCompliant
 			isCompliant = false
 			break
 		} else if dpt.ComplianceState == "" {
@@ -306,8 +305,10 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	// set to compliant only when all templates are compliant
 	if isCompliant {
-		instance.Status.ComplianceState = policiesv1.Compliant
+		newStatus.ComplianceState = policiesv1.Compliant
 	}
+
+	instance.Status = newStatus
 
 	// all done, update status on managed and hub
 	// instance.Status.Details = nil
