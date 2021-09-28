@@ -292,11 +292,12 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 		reqLogger.Info("status update complete... ", "PolicyTemplate", tName)
 	}
 
+	instance.Status = newStatus
 	// one violation found in status of one template, set overall compliancy to NonCompliant
 	isCompliant := true
 	for _, dpt := range newStatus.Details {
 		if dpt.ComplianceState == "NonCompliant" {
-			newStatus.ComplianceState = policiesv1.NonCompliant
+			instance.Status.ComplianceState = policiesv1.NonCompliant
 			isCompliant = false
 			break
 		} else if dpt.ComplianceState == "" {
@@ -305,14 +306,12 @@ func (r *ReconcilePolicy) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	// set to compliant only when all templates are compliant
 	if isCompliant {
-		newStatus.ComplianceState = policiesv1.Compliant
+		instance.Status.ComplianceState = policiesv1.Compliant
 	}
-
-	instance.Status = newStatus
 
 	// all done, update status on managed and hub
 	// instance.Status.Details = nil
-	if !equality.Semantic.DeepEqual(newStatus, oldStatus) {
+	if !equality.Semantic.DeepEqual(newStatus.Details, oldStatus.Details) || instance.Status.ComplianceState != oldStatus.ComplianceState {
 		reqLogger.Info("status mismatch, update it... ")
 		err = r.managedClient.Status().Update(context.TODO(), instance)
 		if err != nil {
