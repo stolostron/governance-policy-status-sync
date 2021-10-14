@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	policiesv1 "github.com/open-cluster-management/governance-policy-propagator/pkg/apis/policy/v1"
+	policiesv1 "github.com/open-cluster-management/governance-policy-propagator/api/v1"
 	"github.com/open-cluster-management/governance-policy-propagator/test/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

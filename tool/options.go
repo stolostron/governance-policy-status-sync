@@ -23,6 +23,7 @@ type PolicySpecSyncOptions struct {
 	HubConfigFilePathName     string
 	ManagedConfigFilePathName string
 	EnableLease               bool
+	EnableLeaderElection      bool
 }
 
 // Options default value
@@ -66,6 +67,10 @@ func ProcessFlags() {
 		false,
 		"If enabled, the controller will start the lease controller to report its status",
 	)
+
+	flag.BoolVar(&Options.EnableLeaderElection, "leader-elect", true,
+		"Enable leader election for controller manager. "+
+			"Enabling this will ensure there is only one active controller manager.")
 }
 
 // CreateClusterNs creates the cluster namespace on managed cluster if not exists
