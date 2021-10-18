@@ -24,6 +24,7 @@ type PolicySpecSyncOptions struct {
 	ManagedConfigFilePathName string
 	EnableLease               bool
 	EnableLeaderElection      bool
+	ProbeAddr                 string
 }
 
 // Options default value
@@ -68,9 +69,20 @@ func ProcessFlags() {
 		"If enabled, the controller will start the lease controller to report its status",
 	)
 
-	flag.BoolVar(&Options.EnableLeaderElection, "leader-elect", true,
+	flag.BoolVar(
+		&Options.EnableLeaderElection,
+		"leader-elect",
+		true,
 		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
+			"Enabling this will ensure there is only one active controller manager.",
+	)
+
+	flag.StringVar(
+		&Options.ProbeAddr,
+		"health-probe-bind-address",
+		":8081",
+		"The address the probe endpoint binds to.",
+	)
 }
 
 // CreateClusterNs creates the cluster namespace on managed cluster if not exists

@@ -31,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
+	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -131,10 +132,11 @@ func main() {
 	options := manager.Options{
 		LeaderElection:         tool.Options.EnableLeaderElection,
 		LeaderElectionID:       "policy-status-sync.open-cluster-management.io",
+		HealthProbeBindAddress: tool.Options.ProbeAddr,
 		// Disable the metrics endpoint
-		MetricsBindAddress:     "0",
-		Namespace:              namespace,
-		Scheme:                 scheme,
+		MetricsBindAddress: "0",
+		Namespace:          namespace,
+		Scheme:             scheme,
 	}
 	// Add support for MultiNamespace set in WATCH_NAMESPACE (e.g ns1,ns2)
 	// Note that this is not intended to be used for excluding namespaces, this is better done via a Predicate
@@ -162,6 +164,15 @@ func main() {
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
+
+	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
+		log.Error(err, "unable to set up health check")
+		os.Exit(1)
+	}
+	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
+		log.Error(err, "unable to set up ready check")
+		os.Exit(1)
+	}
 
 	// create namespace with labels
 	var generatedClient kubernetes.Interface = kubernetes.NewForConfigOrDie(managedCfg)
