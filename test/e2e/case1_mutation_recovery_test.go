@@ -91,17 +91,17 @@ var _ = Describe("Test mutation recovery", func() {
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("Update status to NonCompliant")
 		managedPlc.Object["status"].(map[string]interface{})["compliant"] = "NonCompliant"
 		managedPlc, err := clientManagedDynamic.Resource(gvrPolicy).Namespace(testNamespace).UpdateStatus(context.TODO(), managedPlc, metav1.UpdateOptions{})
 		Expect(err).To(BeNil())
-		Expect(managedPlc.Object["status"].(map[string]interface{})["compliant"]).To(Equal("NonCompliant"))
+		Expect(getCompliant(managedPlc)).To(Equal("NonCompliant"))
 		By("Checking if policy status was recovered to compliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case1PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("clean up all events")
 		_, err = utils.KubectlWithOutput("delete", "events", "-n", testNamespace, "--all",

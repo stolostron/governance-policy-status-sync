@@ -59,18 +59,24 @@ var _ = Describe("Test event message handling", func() {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return 0
+			}
 			return len(plc.Status.Details[0].History)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return ""
+			}
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant; Violation detected"))
 		By("Checking if policy status is noncompliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant"))
 	})
 	It("Should remove `(combined from similar events):` prefix but still compliant", func() {
@@ -84,18 +90,24 @@ var _ = Describe("Test event message handling", func() {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return 0
+			}
 			return len(plc.Status.Details[0].History)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return ""
+			}
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant; no violation detected"))
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 	})
 	It("Should handle violation msg with just NonCompliant", func() {
@@ -109,18 +121,24 @@ var _ = Describe("Test event message handling", func() {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return 0
+			}
 			return len(plc.Status.Details[0].History)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return ""
+			}
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant"))
 		By("Checking if policy status is noncompliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant"))
 	})
 	It("Should handle violation msg with just Compliant", func() {
@@ -134,18 +152,24 @@ var _ = Describe("Test event message handling", func() {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return 0
+			}
 			return len(plc.Status.Details[0].History)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
 			Expect(err).To(BeNil())
+			if len(plc.Status.Details) < 1 {
+				return ""
+			}
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case6PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 	})
 })

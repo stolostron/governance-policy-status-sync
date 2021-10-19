@@ -55,7 +55,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Checking if policy status is noncompliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case4PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("Delete events in ns:" + testNamespace)
 		_, err := utils.KubectlWithOutput("delete", "event", "-n", testNamespace, "--all",

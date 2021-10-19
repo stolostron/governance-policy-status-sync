@@ -54,7 +54,7 @@ var _ = Describe("Test status sync", func() {
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
 			managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("Checking if hub policy status is in sync")
 		Eventually(func() interface{} {
@@ -70,7 +70,7 @@ var _ = Describe("Test status sync", func() {
 		By("Checking if policy status is noncompliant")
 		Eventually(func() interface{} {
 			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant"))
 		By("Checking if policy history is correct")
 		managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
@@ -94,7 +94,7 @@ var _ = Describe("Test status sync", func() {
 		By("Checking if policy status is compliant")
 		Eventually(func() interface{} {
 			managedPlc := utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
-			return managedPlc.Object["status"].(map[string]interface{})["compliant"]
+			return getCompliant(managedPlc)
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant"))
 		By("Checking if policy history is correct")
 		managedPlc = utils.GetWithTimeout(clientManagedDynamic, gvrPolicy, case2PolicyName, testNamespace, true, defaultTimeoutSeconds)
