@@ -211,9 +211,10 @@ ifndef DOCKER_PASS
 endif
 
 kind-deploy-controller: check-env
-	@echo installing policy-spec-sync
 	kubectl create ns $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
+	@echo creating secrets on hub and managed
 	kubectl create secret -n $(KIND_NAMESPACE) generic hub-kubeconfig --from-file=kubeconfig=$(PWD)/kubeconfig_hub_internal --kubeconfig=$(PWD)/kubeconfig_managed
+	@echo installing policy-status-sync
 	kubectl apply -f deploy/operator.yaml -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
 
 kind-deploy-controller-dev:
