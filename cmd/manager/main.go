@@ -163,7 +163,8 @@ func main() {
 				generatedClient,
 				"policy-controller",
 				operatorNs,
-				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app in (policy-framework,policy-config-policy)"),
+				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-framework"),
+				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-config-policy"),
 			)
 			go leaseUpdater.Start(ctx)
 		}
