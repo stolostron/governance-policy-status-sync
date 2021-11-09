@@ -82,7 +82,7 @@ func ProcessFlags() {
 		&Options.LegacyLeaderElection,
 		"legacy-leader-elect",
 		false,
-		"Use a legacy leader election method for controller manager instead of the lease API."
+		"Use a legacy leader election method for controller manager instead of the lease API.",
 	)
 
 	flag.StringVar(
