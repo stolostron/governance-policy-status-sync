@@ -25,7 +25,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
-	"github.com/operator-framework/operator-sdk/pkg/leader"
 
 	sdkVersion "github.com/operator-framework/operator-sdk/version"
 	"github.com/spf13/pflag"
@@ -99,16 +98,10 @@ func main() {
 		}
 	}
 
-	ctx := context.TODO()
-	// Become the leader before proceeding
-	err = leader.Become(ctx, "policy-status-sync-lock")
-	if err != nil {
-		log.Error(err, "")
-		os.Exit(1)
-	}
-
 	// Set default manager options
 	options := manager.Options{
+		LeaderElection:         true,
+		LeaderElectionID:       "policy-status-sync-lock",
 		Namespace:              namespace,
 		MetricsBindAddress:     "0",
 		HealthProbeBindAddress: tool.Options.ProbeAddr,
@@ -165,6 +158,8 @@ func main() {
 		log.Error(err, "")
 		os.Exit(1)
 	}
+
+	ctx := context.TODO()
 
 	if tool.Options.EnableLease {
 		operatorNs, err := k8sutil.GetOperatorNamespace()
