@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/open-cluster-management/addon-framework/pkg/lease"
-	policiesv1 "github.com/open-cluster-management/governance-policy-propagator/api/v1"
 	"github.com/spf13/pflag"
+	policiesv1 "github.com/stolostron/governance-policy-propagator/api/v1"
 
 	// to ensure that exec-entrypoint and run can make use of them.
 	v1 "k8s.io/api/core/v1"
@@ -37,9 +37,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
-	"github.com/open-cluster-management/governance-policy-status-sync/controllers/sync"
-	"github.com/open-cluster-management/governance-policy-status-sync/tool"
-	"github.com/open-cluster-management/governance-policy-status-sync/version"
+	"github.com/stolostron/governance-policy-status-sync/controllers/sync"
+	"github.com/stolostron/governance-policy-status-sync/tool"
+	"github.com/stolostron/governance-policy-status-sync/version"
 )
 
 var (
@@ -221,7 +221,7 @@ func main() {
 				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-framework"),
 				// this additional CheckAddonPodFunc is temporary until the
 				// addon framework independently verifies the config-policy-controller via its lease
-				// see https://github.com/open-cluster-management/backlog/issues/11508
+				// see https://github.com/stolostron/backlog/issues/11508
 				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-config-policy"),
 			)
 			go leaseUpdater.Start(ctx)

@@ -25,7 +25,7 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog"
 
-	"github.com/open-cluster-management/governance-policy-status-sync/test/utils"
+	"github.com/stolostron/governance-policy-status-sync/test/utils"
 )
 
 var (
@@ -79,7 +79,7 @@ var _ = BeforeSuite(func() {
 	clientHubDynamic = NewKubeClientDynamic("", kubeconfigHub, "")
 	clientManaged = NewKubeClient("", kubeconfigManaged, "")
 	clientManagedDynamic = NewKubeClientDynamic("", kubeconfigManaged, "")
-	defaultImageRegistry = "quay.io/open-cluster-management"
+	defaultImageRegistry = "quay.io/stolostron"
 	testNamespace = "managed"
 	defaultTimeoutSeconds = 30
 	By("Create Namespace if needed")
