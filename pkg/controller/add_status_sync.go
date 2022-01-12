@@ -4,7 +4,7 @@
 package controller
 
 import (
-	"github.com/open-cluster-management/governance-policy-status-sync/pkg/controller/sync"
+	"github.com/stolostron/governance-policy-status-sync/pkg/controller/sync"
 )
 
 func init() {
