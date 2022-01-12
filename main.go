@@ -12,7 +12,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/open-cluster-management/addon-framework/pkg/lease"
 	"github.com/spf13/pflag"
 	policiesv1 "github.com/stolostron/governance-policy-propagator/api/v1"
 
@@ -27,6 +26,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
+	"open-cluster-management.io/addon-framework/pkg/lease"
 	addonutils "open-cluster-management.io/addon-framework/pkg/utils"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
