@@ -44,6 +44,7 @@ jobs:
     - stage: build
       name: "Build the image and push it"
       script:
+        - set -e
         - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then export COMPONENT_TAG_EXTENSION="-PR${TRAVIS_PULL_REQUEST}-${TRAVIS_COMMIT}"; fi;
         - make copyright-check TRAVIS_BRANCH=${TRAVIS_BRANCH}
         - |
@@ -74,6 +75,7 @@ jobs:
       name: "Deploy the image to a cluster and run e2e tests"
       if: type = pull_request
       script:
+        - set -e
         #Check out a clusterpool, set up oc, deploy, run e2e tests, and return clusterpool cluster
         - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then export COMPONENT_TAG_EXTENSION="-PR${TRAVIS_PULL_REQUEST}-${TRAVIS_COMMIT}"; fi;
         - |
