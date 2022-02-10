@@ -74,7 +74,6 @@ func main() {
 	}
 
 	hubCfg, err := clientcmd.BuildConfigFromFlags("", tool.Options.HubConfigFilePathName)
-
 	if err != nil {
 		log.Error(err, "")
 		os.Exit(1)
@@ -181,7 +180,7 @@ func main() {
 				// addon framework independently verifies the config-policy-controller via its lease
 				// see https://github.com/open-cluster-management/backlog/issues/11508
 				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-config-policy"),
-			)
+			).WithHubLeaseConfig(hubCfg, namespace)
 			go leaseUpdater.Start(ctx)
 		}
 	} else {
