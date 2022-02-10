@@ -223,7 +223,7 @@ func main() {
 				// addon framework independently verifies the config-policy-controller via its lease
 				// see https://github.com/stolostron/backlog/issues/11508
 				lease.CheckAddonPodFunc(generatedClient.CoreV1(), operatorNs, "app=policy-config-policy"),
-			)
+			).WithHubLeaseConfig(hubCfg, namespace)
 			go leaseUpdater.Start(ctx)
 		}
 	} else {
