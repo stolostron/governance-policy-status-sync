@@ -48,6 +48,9 @@ ifneq ($(KIND_VERSION), latest)
 else
 	KIND_ARGS =
 endif
+# Fetch Ginkgo/Gomega versions from go.mod
+GINKGO_VERSION := $(shell awk '/github.com\/onsi\/ginkgo/ {print $$2}' go.mod | head -1)
+GOMEGA_VERSION := $(shell awk '/github.com\/onsi\/gomega/ {print $$2}' go.mod)
 
 LOCAL_OS := $(shell uname)
 ifeq ($(LOCAL_OS),Linux)
@@ -233,7 +236,9 @@ install-crds:
 
 install-resources:
 	@echo creating namespace on hub
-	kubectl create ns managed --kubeconfig=$(PWD)/kubeconfig_hub
+e2e-dependencies:
+	go get github.com/onsi/ginkgo/v2/ginkgo@$(GINKGO_VERSION)
+	go get github.com/onsi/gomega/...@$(GOMEGA_VERSION)
 
 e2e-test:
 	ginkgo -v --slowSpecThreshold=10 test/e2e
