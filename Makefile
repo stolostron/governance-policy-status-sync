@@ -257,18 +257,26 @@ e2e-test:
 e2e-test-coverage: E2E_TEST_ARGS = --json-report=report_e2e.json --output-dir=.
 e2e-test-coverage: e2e-test
 
+e2e-build-instrumented:
+	go test -covermode=atomic -coverpkg=$(GIT_HOST)/$(IMG)/... -c -tags e2e ./ -o build/_output/bin/$(IMG)-instrumented
+
+e2e-run-instrumented:
+	HUB_CONFIG=$(HUB_CONFIG) MANAGED_CONFIG=$(MANAGED_CONFIG) WATCH_NAMESPACE=$(WATCH_NAMESPACE) ./build/_output/bin/$(IMG)-instrumented -test.run "^TestRunMain$$" -test.coverprofile=coverage_e2e.out &>/dev/null &
+
+e2e-stop-instrumented:
+	ps -ef | grep '$(IMG)' | grep -v grep | awk '{print $$2}' | xargs kill
 
 e2e-debug:
 	@echo gathering hub info
-	kubectl get all -n managed --kubeconfig=$(PWD)/kubeconfig_hub
-	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(PWD)/kubeconfig_hub
+	kubectl get all -n managed --kubeconfig=$(HUB_CONFIG)
+	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(HUB_CONFIG)
 	@echo gathering managed cluster info
-	kubectl get all -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl get all -n managed --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl get leases -n managed --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl describe pods -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
-	kubectl logs $$(kubectl get pods -n $(KIND_NAMESPACE) -o name --kubeconfig=$(PWD)/kubeconfig_managed | grep $(IMG)) -n $(KIND_NAMESPACE) --kubeconfig=$(PWD)/kubeconfig_managed
+	kubectl get all -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
+	kubectl get all -n managed --kubeconfig=$(MANAGED_CONFIG)
+	kubectl get leases -n managed --kubeconfig=$(MANAGED_CONFIG)
+	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(MANAGED_CONFIG)
+	kubectl describe pods -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
+	kubectl logs $$(kubectl get pods -n $(KIND_NAMESPACE) -o name --kubeconfig=$(MANAGED_CONFIG) | grep $(IMG)) -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
 
 ############################################################
 # test coverage
