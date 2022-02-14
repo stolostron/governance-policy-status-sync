@@ -27,7 +27,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
 	"open-cluster-management.io/addon-framework/pkg/lease"
-	addonutils "open-cluster-management.io/addon-framework/pkg/utils"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -40,6 +39,8 @@ import (
 	"github.com/stolostron/governance-policy-status-sync/controllers/sync"
 	"github.com/stolostron/governance-policy-status-sync/tool"
 	"github.com/stolostron/governance-policy-status-sync/version"
+
+	util "github.com/stolostron/governance-policy-status-sync/pkg/utils"
 )
 
 var (
@@ -174,7 +175,7 @@ func main() {
 	}
 
 	// use config check
-	configChecker, err := addonutils.NewConfigChecker("policy-status-sync", tool.Options.HubConfigFilePathName)
+	configChecker, err := util.NewConfigChecker("policy-status-sync", tool.Options.HubConfigFilePathName)
 	if err != nil {
 		log.Error(err, "unable to setup a configChecker")
 		os.Exit(1)
@@ -236,4 +237,8 @@ func main() {
 		log.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+func NewConfigChecker(s1, s2 string) {
+	panic("unimplemented")
 }
