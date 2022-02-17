@@ -91,5 +91,6 @@ report.json
 report_*.json
 gosec.json
 
+vendor/
 .go/
 bin/
