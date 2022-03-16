@@ -12,7 +12,9 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/go-logr/zapr"
 	"github.com/spf13/pflag"
+	"github.com/stolostron/go-log-utils/zaputil"
 	policiesv1 "github.com/stolostron/governance-policy-propagator/api/v1"
 
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -26,6 +28,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
+	"k8s.io/klog/v2"
 	"open-cluster-management.io/addon-framework/pkg/lease"
 	addonutils "open-cluster-management.io/addon-framework/pkg/utils"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -34,7 +37,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	"github.com/stolostron/governance-policy-status-sync/controllers/sync"
@@ -62,6 +64,14 @@ func init() {
 }
 
 func main() {
+	zflags := zaputil.FlagConfig{
+		LevelName:   "log-level",
+		EncoderName: "log-encoder",
+	}
+
+	zflags.Bind(flag.CommandLine)
+	klog.InitFlags(flag.CommandLine)
+
 	// custom flags for the controler
 	tool.ProcessFlags()
 
@@ -69,7 +79,19 @@ func main() {
 
 	pflag.Parse()
 
-	logf.SetLogger(zap.New())
+	ctrlZap, err := zflags.BuildForCtrl()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to build zap logger for controller: %v", err))
+	}
+
+	ctrl.SetLogger(zapr.NewLogger(ctrlZap))
+
+	klogZap, err := zaputil.BuildForKlog(zflags.GetConfig(), flag.CommandLine)
+	if err != nil {
+		log.Error(err, "Failed to build zap logger for klog, those logs will not go through zap")
+	} else {
+		klog.SetLogger(zapr.NewLogger(klogZap).WithName("klog"))
+	}
 
 	printVersion()
 
