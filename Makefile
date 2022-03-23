@@ -255,6 +255,8 @@ install-crds:
 install-resources:
 	@echo creating namespace on hub
 	kubectl create ns $(WATCH_NAMESPACE) --kubeconfig=$(HUB_CONFIG)
+	@echo creating namespace on managed
+	kubectl create ns $(MANAGED_CLUSTER_NAME) --kubeconfig=$(MANAGED_CONFIG)
 
 e2e-dependencies:
 	go get github.com/onsi/ginkgo/v2/ginkgo@$(GINKGO_VERSION)
