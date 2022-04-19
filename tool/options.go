@@ -5,7 +5,10 @@ package tool
 
 import (
 	"github.com/spf13/pflag"
+	ctrl "sigs.k8s.io/controller-runtime"
 )
+
+var log = ctrl.Log.WithName("cmd")
 
 // PolicySpecSyncOptions for command line flag parsing
 type PolicySpecSyncOptions struct {

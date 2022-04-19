@@ -184,6 +184,7 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 	newStatus := policiesv1.PolicyStatus{}
 
 	reqLogger.Info("Updating status for policy templates")
+
 	for _, policyT := range instance.Spec.PolicyTemplates {
 		object, _, err := unstructured.UnstructuredJSONScheme.Decode(policyT.ObjectDefinition.Raw, nil, nil)
 		if err != nil {
