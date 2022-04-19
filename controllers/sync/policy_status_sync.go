@@ -24,14 +24,13 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 const ControllerName string = "policy-status-sync"
 
-var log = logf.Log.WithName(ControllerName)
+var log = ctrl.Log.WithName(ControllerName)
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *PolicyReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -73,7 +72,7 @@ type PolicyReconciler struct {
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling Policy...")
+	reqLogger.Info("Reconciling the policy")
 
 	// Fetch the Policy instance
 	instance := &policiesv1.Policy{}
@@ -89,7 +88,7 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 			if err != nil {
 				if errors.IsNotFound(err) {
 					// confirmed deleted on hub, doing nothing
-					reqLogger.Info("Policy was deleted, no status to update...")
+					reqLogger.Info("Policy was deleted, no status to update")
 
 					return reconcile.Result{}, nil
 				}
@@ -266,7 +265,7 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 		// append existingDpt to status
 		newStatus.Details = append(newStatus.Details, existingDpt)
 
-		reqLogger.Info("status update complete... ", "PolicyTemplate", tName)
+		reqLogger.Info("status update complete", "PolicyTemplate", tName)
 	}
 
 	instance.Status = newStatus
@@ -292,7 +291,7 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 	// instance.Status.Details = nil
 	if !equality.Semantic.DeepEqual(newStatus.Details, oldStatus.Details) ||
 		instance.Status.ComplianceState != oldStatus.ComplianceState {
-		reqLogger.Info("status mismatch on managed, update it... ")
+		reqLogger.Info("status mismatch on managed, update it")
 
 		err = r.ManagedClient.Status().Update(ctx, instance)
 
@@ -306,11 +305,11 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 			fmt.Sprintf("Policy %s status was updated in cluster namespace %s", instance.GetName(),
 				instance.GetNamespace()))
 	} else {
-		reqLogger.Info("status match on managed, nothing to update... ")
+		reqLogger.Info("status match on managed, nothing to update")
 	}
 
 	if os.Getenv("ON_MULTICLUSTERHUB") != "true" && !equality.Semantic.DeepEqual(hubPlc.Status, instance.Status) {
-		reqLogger.Info("status not in sync, update the hub... ")
+		reqLogger.Info("status not in sync, update the hub")
 
 		hubPlc.Status = instance.Status
 		err = r.HubClient.Status().Update(ctx, hubPlc)
@@ -325,10 +324,10 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 			fmt.Sprintf("Policy %s status was updated in cluster namespace %s", hubPlc.GetName(),
 				hubPlc.GetNamespace()))
 	} else {
-		reqLogger.Info("status match on hub, nothing to update... ")
+		reqLogger.Info("status match on hub, nothing to update")
 	}
 
-	reqLogger.Info("Reconciling complete...")
+	reqLogger.Info("Reconciling complete")
 
 	return reconcile.Result{}, nil
 }

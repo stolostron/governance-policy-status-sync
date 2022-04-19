@@ -28,7 +28,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
-	"k8s.io/klog/v2"
 	"open-cluster-management.io/addon-framework/pkg/lease"
 	addonutils "open-cluster-management.io/addon-framework/pkg/utils"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -36,7 +35,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	"github.com/stolostron/governance-policy-status-sync/controllers/sync"
@@ -46,14 +44,18 @@ import (
 
 var (
 	eventsScheme = k8sruntime.NewScheme()
-	log          = logf.Log.WithName("setup")
+	log          = ctrl.Log.WithName("setup")
 	scheme       = k8sruntime.NewScheme()
 )
 
 func printVersion() {
-	log.Info(fmt.Sprintf("Operator Version: %s", version.Version))
-	log.Info(fmt.Sprintf("Go Version: %s", runtime.Version()))
-	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
+	log.Info(
+		"Using",
+		"OperatorVersion", version.Version,
+		"GoVersion", runtime.Version(),
+		"GOOS", runtime.GOOS,
+		"GOARCH", runtime.GOARCH,
+	)
 }
 
 func init() {
@@ -70,7 +72,6 @@ func main() {
 	}
 
 	zflags.Bind(flag.CommandLine)
-	klog.InitFlags(flag.CommandLine)
 
 	// custom flags for the controler
 	tool.ProcessFlags()
@@ -85,13 +86,6 @@ func main() {
 	}
 
 	ctrl.SetLogger(zapr.NewLogger(ctrlZap))
-
-	klogZap, err := zaputil.BuildForKlog(zflags.GetConfig(), flag.CommandLine)
-	if err != nil {
-		log.Error(err, "Failed to build zap logger for klog, those logs will not go through zap")
-	} else {
-		klog.SetLogger(zapr.NewLogger(klogZap).WithName("klog"))
-	}
 
 	printVersion()
 
@@ -108,7 +102,7 @@ func main() {
 
 	hubCfg, err := clientcmd.BuildConfigFromFlags("", tool.Options.HubConfigFilePathName)
 	if err != nil {
-		log.Error(err, "")
+		log.Error(err, "Failed to build hub cluster config")
 		os.Exit(1)
 	}
 
@@ -125,13 +119,13 @@ func main() {
 
 			managedCfg, err = clientcmd.BuildConfigFromFlags("", tool.Options.ManagedConfigFilePathName)
 			if err != nil {
-				log.Error(err, "")
+				log.Error(err, "Failed to build managed cluster config")
 				os.Exit(1)
 			}
 		} else {
 			managedCfg, err = config.GetConfig()
 			if err != nil {
-				log.Error(err, "")
+				log.Error(err, "Failed to build managed cluster config")
 				os.Exit(1)
 			}
 		}
