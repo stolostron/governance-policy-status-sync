@@ -108,6 +108,11 @@ jobs:
         projectBaseDir: governance-policy-status-sync
         args: >
           --debug
+    
+    - name: Verify Deployment Configuration
+      run: |
+        make build-images
+        make kind-deploy-controller-dev
 
     - name: Debug
       if: ${{ failure() }}
