@@ -15,7 +15,6 @@ import (
 	"github.com/go-logr/zapr"
 	"github.com/spf13/pflag"
 	"github.com/stolostron/go-log-utils/zaputil"
-	policiesv1 "github.com/stolostron/governance-policy-propagator/api/v1"
 
 	// to ensure that exec-entrypoint and run can make use of them.
 	v1 "k8s.io/api/core/v1"
@@ -31,6 +30,7 @@ import (
 	"k8s.io/klog/v2"
 	"open-cluster-management.io/addon-framework/pkg/lease"
 	addonutils "open-cluster-management.io/addon-framework/pkg/utils"
+	policiesv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -38,9 +38,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
-	"github.com/stolostron/governance-policy-status-sync/controllers/sync"
-	"github.com/stolostron/governance-policy-status-sync/tool"
-	"github.com/stolostron/governance-policy-status-sync/version"
+	"open-cluster-management.io/governance-policy-status-sync/controllers/sync"
+	"open-cluster-management.io/governance-policy-status-sync/tool"
+	"open-cluster-management.io/governance-policy-status-sync/version"
 )
 
 var (
