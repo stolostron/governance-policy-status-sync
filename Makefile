@@ -13,14 +13,7 @@
 # limitations under the License.
 # Copyright Contributors to the Open Cluster Management project
 
-# Image URL to use all building/pushing image targets;
-# Use your own docker registry and image name for dev/test by overridding the IMG and REGISTRY environment variable.
-IMG ?= $(shell cat COMPONENT_NAME 2> /dev/null)
-REGISTRY ?= quay.io/stolostron
-TAG ?= latest
-
 PWD := $(shell pwd)
-BASE_DIR := $(shell basename $(PWD))
 export PATH := $(PWD)/bin:$(PATH)
 
 # Keep an existing GOPATH, make a private one if it is undefined
@@ -32,8 +25,6 @@ GOARCH = $(shell go env GOARCH)
 GOOS = $(shell go env GOOS)
 TESTARGS_DEFAULT := -v
 export TESTARGS ?= $(TESTARGS_DEFAULT)
-VERSION ?= $(shell cat COMPONENT_VERSION 2> /dev/null)
-IMAGE_NAME_AND_VERSION ?= $(REGISTRY)/$(IMG)
 # Handle KinD configuration
 KIND_NAME ?= test-managed
 KIND_NAMESPACE ?= open-cluster-management-agent-addon
@@ -54,29 +45,28 @@ GOMEGA_VERSION := $(shell awk '/github.com\/onsi\/gomega/ {print $$2}' go.mod)
 # Test coverage threshold
 export COVERAGE_MIN ?= 69
 
-LOCAL_OS := $(shell uname)
-ifeq ($(LOCAL_OS),Linux)
-    TARGET_OS ?= linux
-    XARGS_FLAGS="-r"
-else ifeq ($(LOCAL_OS),Darwin)
-    TARGET_OS ?= darwin
-    XARGS_FLAGS=
-else
-    $(error "This system's OS $(LOCAL_OS) isn't recognized/supported")
-endif
-
-.PHONY: fmt lint test coverage build build-images fmt-dependencies lint-dependencies
+# Image URL to use all building/pushing image targets;
+# Use your own docker registry and image name for dev/test by overridding the IMG and REGISTRY environment variable.
+IMG ?= $(shell cat COMPONENT_NAME 2> /dev/null)
+VERSION ?= $(shell cat COMPONENT_VERSION 2> /dev/null)
+REGISTRY ?= quay.io/stolostron
+TAG ?= latest
+IMAGE_NAME_AND_VERSION ?= $(REGISTRY)/$(IMG)
 
 include build/common/Makefile.common.mk
 
 ############################################################
 # work section
 ############################################################
+
 $(GOBIN):
-	@echo "create gobin"
 	@mkdir -p $(GOBIN)
 
-work: $(GOBIN)
+############################################################
+# clean section
+############################################################
+clean::
+	rm -f build/_output/bin/$(IMG)
 
 ############################################################
 # format section
@@ -161,12 +151,6 @@ run:
 build-images:
 	@docker build -t ${IMAGE_NAME_AND_VERSION} -f build/Dockerfile .
 	@docker tag ${IMAGE_NAME_AND_VERSION} $(REGISTRY)/$(IMG):$(TAG)
-
-############################################################
-# clean section
-############################################################
-clean::
-	rm -f build/_output/bin/$(IMG)
 
 ############################################################
 # Generate manifests
