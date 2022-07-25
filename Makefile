@@ -287,7 +287,7 @@ e2e-build-instrumented:
 
 .PHONY: e2e-run-instrumented
 e2e-run-instrumented: e2e-build-instrumented
-	HUB_CONFIG=$(HUB_CONFIG) MANAGED_CONFIG=$(MANAGED_CONFIG) WATCH_NAMESPACE=$(WATCH_NAMESPACE) ./build/_output/bin/$(IMG)-instrumented -test.run "^TestRunMain$$" -test.coverprofile=coverage_e2e.out &>/dev/null &
+	HUB_CONFIG=$(HUB_CONFIG) MANAGED_CONFIG=$(MANAGED_CONFIG) WATCH_NAMESPACE=$(WATCH_NAMESPACE) ./build/_output/bin/$(IMG)-instrumented -test.run "^TestRunMain$$" -test.coverprofile=coverage_e2e.out &>build/_output/controller.log &
 
 .PHONY: e2e-stop-instrumented
 e2e-stop-instrumented:
@@ -295,16 +295,10 @@ e2e-stop-instrumented:
 
 .PHONY: e2e-debug
 e2e-debug:
-	@echo gathering hub info
-	kubectl get all -n managed --kubeconfig=$(HUB_CONFIG)
-	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(HUB_CONFIG)
-	@echo gathering managed cluster info
-	kubectl get all -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
-	kubectl get all -n managed --kubeconfig=$(MANAGED_CONFIG)
-	kubectl get leases -n managed --kubeconfig=$(MANAGED_CONFIG)
-	kubectl get Policy.policy.open-cluster-management.io --all-namespaces --kubeconfig=$(MANAGED_CONFIG)
-	kubectl describe pods -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
-	kubectl logs $$(kubectl get pods -n $(KIND_NAMESPACE) -o name --kubeconfig=$(MANAGED_CONFIG) | grep $(IMG)) -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
+	@echo local controller log:
+	-cat build/_output/controller.log
+	@echo remote controller log:
+	-kubectl logs $$(kubectl get pods -n $(KIND_NAMESPACE) -o name --kubeconfig=$(MANAGED_CONFIG) | grep $(IMG)) -n $(KIND_NAMESPACE) --kubeconfig=$(MANAGED_CONFIG)
 
 ############################################################
 # test coverage
