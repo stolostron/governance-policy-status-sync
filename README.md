@@ -58,5 +58,5 @@ any of the Kustomize files, you may regenerate `deploy/operator.yaml` by running
 - The `governance-policy-status-sync` is part of the `open-cluster-management` community. For more information, visit: [open-cluster-management.io](https://open-cluster-management.io).
 
 <!---
-Date: April/29/2022
+Date: 08/22/2022
 -->
