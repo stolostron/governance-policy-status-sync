@@ -2,6 +2,8 @@
 
 # Governance Policy Status Sync [![KinD tests](https://github.com/stolostron/governance-policy-status-sync/actions/workflows/kind.yml/badge.svg?branch=main&event=push)](https://github.com/stolostron/governance-policy-status-sync/actions/workflows/kind.yml)
 
+test
+
 ## Description
 
 The governance policy status sync runs on managed clusters, updating `Policy` statuses on both the hub and (local) managed clusters, based on events and changes in the managed cluster. This controller is a part of the [governance-policy-framework](https://github.com/stolostron/governance-policy-framework).
