@@ -4,8 +4,8 @@
 
 # Deprecation Notice
 
-The standalone version of the controller has been removed in versions newer than v0.8.x. This controller is now part of
-[governance-policy-framework-addon](https://github.com/open-cluster-management-io/governance-policy-framework-addon).
+The standalone version of the controller has been removed in RHACM 2.7. This controller is now part of
+[governance-policy-framework-addon](https://github.com/stolostron/governance-policy-framework-addon).
 
 ## Description
 
