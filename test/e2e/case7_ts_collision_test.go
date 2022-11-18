@@ -6,7 +6,7 @@ package e2e
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"open-cluster-management.io/governance-policy-propagator/test/utils"
+	"github.com/stolostron/governance-policy-propagator/test/utils"
 )
 
 const (
