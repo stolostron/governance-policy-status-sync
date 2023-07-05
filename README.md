@@ -1,5 +1,10 @@
 [comment]: # ( Copyright Contributors to the Open Cluster Management project )
 
+# Deprecation Notice
+
+The standalone version of the controller has been removed in versions newer than ACM v2.6. This controller is now part of
+[governance-policy-framework-addon](https://github.com/stolostron/governance-policy-framework-addon).
+
 # Governance Policy Status Sync [![KinD tests](https://github.com/stolostron/governance-policy-status-sync/actions/workflows/kind.yml/badge.svg?branch=main&event=push)](https://github.com/stolostron/governance-policy-status-sync/actions/workflows/kind.yml)
 
 ## Description
