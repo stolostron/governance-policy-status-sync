@@ -27,17 +27,17 @@ var _ = Describe("Test event sorting by name when timestamps collide", Ordered, 
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7PolicyYaml, "-n", clusterNamespaceOnHub, case7hubconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		_, err = utils.KubectlWithOutput(
 			"apply", "-f", case7PolicyYaml, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		_, err = utils.KubectlWithOutput(
 			"apply", "-f", case7Event1, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("Compliant"))
@@ -49,7 +49,7 @@ var _ = Describe("Test event sorting by name when timestamps collide", Ordered, 
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7Event2, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("NonCompliant"))
@@ -61,7 +61,7 @@ var _ = Describe("Test event sorting by name when timestamps collide", Ordered, 
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7Event3, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("Compliant"))
@@ -71,15 +71,15 @@ var _ = Describe("Test event sorting by name when timestamps collide", Ordered, 
 
 	AfterAll(func() {
 		_, err := utils.KubectlWithOutput("delete", "-f", case7PolicyYaml, "-n", clusterNamespaceOnHub, case7hubconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7PolicyYaml, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event1, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event2, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event3, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 })
 
@@ -88,17 +88,17 @@ var _ = Describe("Test event sorting by eventtime when timestamps collide", Orde
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7PolicyYaml, "-n", clusterNamespaceOnHub, case7hubconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		_, err = utils.KubectlWithOutput(
 			"apply", "-f", case7PolicyYaml, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		_, err = utils.KubectlWithOutput(
 			"apply", "-f", case7Event4, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("Compliant"))
@@ -110,7 +110,7 @@ var _ = Describe("Test event sorting by eventtime when timestamps collide", Orde
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7Event5, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("NonCompliant"))
@@ -122,7 +122,7 @@ var _ = Describe("Test event sorting by eventtime when timestamps collide", Orde
 		_, err := utils.KubectlWithOutput(
 			"apply", "-f", case7Event6, "-n", testNamespace, case7managedconfig,
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 
 		Eventually(checkCompliance(case7PolicyName), defaultTimeoutSeconds, 1).
 			Should(Equal("Compliant"))
@@ -132,14 +132,14 @@ var _ = Describe("Test event sorting by eventtime when timestamps collide", Orde
 
 	AfterAll(func() {
 		_, err := utils.KubectlWithOutput("delete", "-f", case7PolicyYaml, "-n", clusterNamespaceOnHub, case7hubconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7PolicyYaml, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event4, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event5, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput("delete", "-f", case7Event6, "-n", testNamespace, case7managedconfig)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 })

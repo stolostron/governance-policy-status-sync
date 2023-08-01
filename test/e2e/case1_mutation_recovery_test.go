@@ -23,7 +23,7 @@ var _ = Describe("Test mutation recovery", func() {
 		By("Creating a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("apply", "-f", case1PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -35,7 +35,7 @@ var _ = Describe("Test mutation recovery", func() {
 		By("Creating a policy on managed cluster in ns:" + testNamespace)
 		_, err = utils.KubectlWithOutput("apply", "-f", case1PolicyYaml, "-n", testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		managedPlc := utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -49,7 +49,7 @@ var _ = Describe("Test mutation recovery", func() {
 		By("Deleting a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("delete", "-f", case1PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput(
 			"delete",
 			"-f",
@@ -59,7 +59,7 @@ var _ = Describe("Test mutation recovery", func() {
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed",
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		opt := metav1.ListOptions{}
 		utils.ListWithTimeout(clientHubDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 		utils.ListWithTimeout(clientManagedDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
@@ -150,7 +150,7 @@ var _ = Describe("Test mutation recovery", func() {
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed",
 		)
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		By("Comparing spec between hub and managed policy")
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
@@ -216,6 +216,6 @@ var _ = Describe("Test mutation recovery", func() {
 		By("clean up all events")
 		_, err := utils.KubectlWithOutput("delete", "events", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 })

@@ -37,7 +37,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Creating a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("apply", "-f", case3PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -49,7 +49,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Creating a policy on managed cluster in ns:" + testNamespace)
 		_, err = utils.KubectlWithOutput("apply", "-f", case3PolicyYaml, "-n", testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		managedPlc := utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -63,7 +63,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Deleting a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("delete", "-f", case3PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput(
 			"delete",
 			"-f",
@@ -73,14 +73,14 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed",
 		)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		opt := metav1.ListOptions{}
 		utils.ListWithTimeout(clientHubDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 		utils.ListWithTimeout(clientManagedDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 		By("clean up all events")
 		_, err = utils.KubectlWithOutput("delete", "events", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 	})
 	It("Should not set overall compliancy to compliant", func() {
 		By("Generating an event doesn't belong to any template")
@@ -136,7 +136,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return ""
 			}
@@ -195,7 +195,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 2 {
 				return ""
 			}
@@ -437,7 +437,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -454,7 +454,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		managedPlc = utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -474,7 +474,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			return len(plc.Status.Details)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
@@ -532,7 +532,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -549,7 +549,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		managedPlc = utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -569,7 +569,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			return len(plc.Status.Details)
 		}, defaultTimeoutSeconds, 1).Should(Equal(1))
