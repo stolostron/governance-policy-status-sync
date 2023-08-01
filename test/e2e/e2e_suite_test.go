@@ -118,7 +118,7 @@ var _ = BeforeSuite(func() {
 	By("Create EventRecorder")
 	var err error
 	managedRecorder, err = utils.CreateRecorder(clientManaged, "status-sync-controller-test")
-	Expect(err).To(BeNil())
+	Expect(err).ToNot(HaveOccurred())
 })
 
 func NewKubeClient(url, kubeconfig, context string) kubernetes.Interface {

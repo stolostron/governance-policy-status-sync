@@ -26,7 +26,7 @@ var _ = Describe("Test status sync", func() {
 		By("Creating a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("apply", "-f", case2PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -38,7 +38,7 @@ var _ = Describe("Test status sync", func() {
 		By("Creating a policy on managed cluster in ns:" + testNamespace)
 		_, err = utils.KubectlWithOutput("apply", "-f", case2PolicyYaml, "-n", testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		managedPlc := utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -52,7 +52,7 @@ var _ = Describe("Test status sync", func() {
 		By("Deleting a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("delete", "-f", case2PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput(
 			"delete",
 			"-f",
@@ -62,7 +62,7 @@ var _ = Describe("Test status sync", func() {
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed",
 		)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		opt := metav1.ListOptions{}
 		utils.ListWithTimeout(clientHubDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
 		utils.ListWithTimeout(clientManagedDynamic, gvrPolicy, opt, 0, true, defaultTimeoutSeconds)
@@ -144,9 +144,9 @@ var _ = Describe("Test status sync", func() {
 			defaultTimeoutSeconds)
 		var plc *policiesv1.Policy
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-		Expect(err).To(BeNil())
-		Expect(len(plc.Status.Details)).To(Equal(1))
-		Expect(len(plc.Status.Details[0].History)).To(Equal(2))
+		Expect(err).ToNot(HaveOccurred())
+		Expect(plc.Status.Details).To(HaveLen(1))
+		Expect(plc.Status.Details[0].History).To(HaveLen(2))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
 		By("Checking if hub policy status is in sync")
 		Eventually(func() interface{} {
@@ -198,9 +198,9 @@ var _ = Describe("Test status sync", func() {
 			defaultTimeoutSeconds)
 		var plc *policiesv1.Policy
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-		Expect(err).To(BeNil())
-		Expect(len(plc.Status.Details)).To(Equal(1))
-		Expect(len(plc.Status.Details[0].History)).To(Equal(3))
+		Expect(err).ToNot(HaveOccurred())
+		Expect(plc.Status.Details).To(HaveLen(1))
+		Expect(plc.Status.Details[0].History).To(HaveLen(3))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
 		By("Checking if hub policy status is in sync")
 		Eventually(func() interface{} {
@@ -217,7 +217,7 @@ var _ = Describe("Test status sync", func() {
 		By("clean up all events")
 		_, err = utils.KubectlWithOutput("delete", "events", "-n", testNamespace, "--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 	It("Should hold up to last 10 history", func() {
 		By("Generating an a lot of event on the policy")
@@ -263,17 +263,17 @@ var _ = Describe("Test status sync", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("Compliant; No violation assert"))
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		By("Checking no violation event is the first one in history")
 		Expect(plc.Status.ComplianceState).To(Equal(policiesv1.Compliant))
-		Expect(len(plc.Status.Details)).To(Equal(1))
+		Expect(plc.Status.Details).To(HaveLen(1))
 		By("Checking if size of the history is 10")
-		Expect(len(plc.Status.Details[0].History)).To(Equal(10))
+		Expect(plc.Status.Details[0].History).To(HaveLen(10))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
 		By("Generating a violation event")
 		managedRecorder.Event(
@@ -290,17 +290,17 @@ var _ = Describe("Test status sync", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			return plc.Status.Details[0].History[0].Message
 		}, defaultTimeoutSeconds, 1).Should(Equal("NonCompliant; Violation assert"))
 		err = runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		By("Checking violation event is the first one in history")
 		Expect(plc.Status.ComplianceState).To(Equal(policiesv1.NonCompliant))
-		Expect(len(plc.Status.Details)).To(Equal(1))
+		Expect(plc.Status.Details).To(HaveLen(1))
 		By("Checking if size of the history is 10")
-		Expect(len(plc.Status.Details[0].History)).To(Equal(10))
+		Expect(plc.Status.Details[0].History).To(HaveLen(10))
 		Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case2-test-policy-trustedcontainerpolicy"))
 		By("Checking if hub policy status is in sync")
 		Eventually(func() interface{} {
@@ -322,6 +322,6 @@ var _ = Describe("Test status sync", func() {
 			testNamespace,
 			"--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 })

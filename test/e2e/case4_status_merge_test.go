@@ -22,7 +22,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 		By("Creating a policy on hub cluster in ns:" + clusterNamespaceOnHub)
 		_, err := utils.KubectlWithOutput("apply", "-f", case4PolicyYaml, "-n", clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -39,7 +39,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		managedPlc := utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -58,7 +58,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			"-n",
 			clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput(
 			"delete",
 			"-f",
@@ -67,7 +67,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			testNamespace,
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		opt := metav1.ListOptions{}
 		utils.ListWithTimeout(
 			clientHubDynamic,
@@ -91,7 +91,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			testNamespace,
 			"--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 	It("Should merge existing status with new status from event", func() {
 		By("Generating some events in ns:" + testNamespace)
@@ -127,7 +127,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 			testNamespace,
 			"--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		utils.ListWithTimeout(
 			clientManagedDynamic,
 			gvrEvent,
@@ -157,7 +157,7 @@ var _ = Describe("Test status sync with multiple templates", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(plc.Status.Details[0].TemplateMeta.GetName()).To(Equal("case4-test-policy-trustedcontainerpolicy"))
 
 			return len(plc.Status.Details[0].History)

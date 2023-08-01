@@ -27,7 +27,7 @@ var _ = Describe("Test event message handling", func() {
 			"-n",
 			clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		hubPlc := utils.GetWithTimeout(
 			clientHubDynamic,
 			gvrPolicy,
@@ -44,7 +44,7 @@ var _ = Describe("Test event message handling", func() {
 			"-n",
 			testNamespace,
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		managedPlc := utils.GetWithTimeout(
 			clientManagedDynamic,
 			gvrPolicy,
@@ -63,7 +63,7 @@ var _ = Describe("Test event message handling", func() {
 			"-n",
 			clusterNamespaceOnHub,
 			"--kubeconfig=../../kubeconfig_hub")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		_, err = utils.KubectlWithOutput(
 			"delete",
 			"-f",
@@ -72,7 +72,7 @@ var _ = Describe("Test event message handling", func() {
 			testNamespace,
 			"--ignore-not-found",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 		opt := metav1.ListOptions{}
 		utils.ListWithTimeout(
 			clientHubDynamic,
@@ -96,7 +96,7 @@ var _ = Describe("Test event message handling", func() {
 			testNamespace,
 			"--all",
 			"--kubeconfig=../../kubeconfig_managed")
-		Expect(err).Should(BeNil())
+		Expect(err).ShouldNot(HaveOccurred())
 	})
 	It("Should remove `(combined from similar events):` prefix but still noncompliant", func() {
 		By("Generating an event in ns:" + testNamespace + " that contains `(combined from similar events):` prefix")
@@ -124,7 +124,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return 0
 			}
@@ -140,7 +140,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return ""
 			}
@@ -186,7 +186,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return 0
 			}
@@ -202,7 +202,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return ""
 			}
@@ -248,7 +248,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return 0
 			}
@@ -264,7 +264,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return ""
 			}
@@ -310,7 +310,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return 0
 			}
@@ -326,7 +326,7 @@ var _ = Describe("Test event message handling", func() {
 				true,
 				defaultTimeoutSeconds)
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(managedPlc.Object, &plc)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			if len(plc.Status.Details) < 1 {
 				return ""
 			}
